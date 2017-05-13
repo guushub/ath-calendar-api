@@ -1,5 +1,7 @@
 // Node module import
 import * as http from 'http';
+import * as google from "googleapis";
+
 
 // Custom module import
 import {TestClass} from './test/test';

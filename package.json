@@ -13,5 +13,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^7.0.18"
+  },
+  "dependencies": {
+    "googleapis": "^19.0.0"
   }
 }
