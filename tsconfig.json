@@ -2,10 +2,6 @@
     "compilerOptions": {
         "target": "es5",
         "rootDir": "./src",
-        "outDir": "./app",
-        "typeRoots": [
-            "./typings",
-            "./node_modules/@types"
-        ]
+        "outDir": "./app"
     }
 }

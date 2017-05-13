@@ -5,8 +5,10 @@
   "main": "./app/index.js",
   "scripts": {
     "start": "node ./app/index.js",
+    "debug": "node --debug ./app/index.js",
     "build": "tsc",
-    "build:w": "tsc -w"
+    "build:w": "tsc -w",
+    "test": "node ./test/quickstart.js"
   },
   "keywords": [],
   "author": "Guus Claessen",
