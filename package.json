@@ -14,10 +14,12 @@
   "author": "Guus Claessen",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^7.0.18"
+    "@types/node": "^7.0.18",
+    "@types/promise": "^7.1.30"
   },
   "dependencies": {
     "google-auth-library": "^0.10.0",
-    "googleapis": "^19.0.0"
+    "googleapis": "^19.0.0",
+    "promise": "^7.1.1"
   }
 }
