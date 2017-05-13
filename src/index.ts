@@ -1,7 +1,7 @@
 // Node module import
 import * as http from 'http';
-import * as google from "googleapis";
-
+import * as google from 'googleapis';
+import * as googleAuth from 'google-auth-library';
 
 // Custom module import
 import {TestClass} from './test/test';
