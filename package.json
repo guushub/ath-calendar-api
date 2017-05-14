@@ -20,6 +20,7 @@
   "dependencies": {
     "google-auth-library": "^0.10.0",
     "googleapis": "^19.0.0",
+    "ical-generator": "^0.2.9",
     "promise": "^7.1.1"
   }
 }

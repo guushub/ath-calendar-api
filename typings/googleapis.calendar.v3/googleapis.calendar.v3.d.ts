@@ -28,7 +28,7 @@ declare module google {
                     'delete': (parameters: {'calendarId': string}, callback: (error: any, body: any, response: any) => void) => Request;
                     'get': (parameters: {'calendarId': string}, callback: (error: any, body: CalendarListEntry, response: any) => void) => Request;
                     'insert': (parameters: {'colorRgbFormat'?: boolean}, callback: (error: any, body: CalendarListEntry, response: any) => void) => Request;
-                    'list': (parameters: {'maxResults'?: number, 'minAccessRole'?: string, 'pageToken'?: string, 'showDeleted'?: boolean, 'showHidden'?: boolean, 'syncToken'?: string}, callback: (error: any, body: CalendarList, response: any) => void) => Request;
+                    'list': (parameters: {'auth': any, 'maxResults'?: number, 'minAccessRole'?: string, 'pageToken'?: string, 'showDeleted'?: boolean, 'showHidden'?: boolean, 'syncToken'?: string}, callback: (error: any, body: CalendarList, response: any) => void) => Request;
                     'patch': (parameters: {'calendarId': string, 'colorRgbFormat'?: boolean}, callback: (error: any, body: CalendarListEntry, response: any) => void) => Request;
                     'update': (parameters: {'calendarId': string, 'colorRgbFormat'?: boolean}, callback: (error: any, body: CalendarListEntry, response: any) => void) => Request;
                     'watch': (parameters: {'maxResults'?: number, 'minAccessRole'?: string, 'pageToken'?: string, 'showDeleted'?: boolean, 'showHidden'?: boolean, 'syncToken'?: string}, callback: (error: any, body: Channel, response: any) => void) => Request;
@@ -48,10 +48,10 @@ declare module google {
                     'get': (parameters: any, callback: (error: any, body: Colors, response: any) => void) => Request;
                 };
                 'events': {
-                    'delete': (parameters: {'calendarId': string, 'eventId': string, 'sendNotifications'?: boolean}, callback: (error: any, body: any, response: any) => void) => Request;
+                    'delete': (parameters: {'auth':any, 'calendarId': string, 'eventId': string, 'sendNotifications'?: boolean}, callback: (error: any, body: any, response: any) => void) => Request;
                     'get': (parameters: {'alwaysIncludeEmail'?: boolean, 'calendarId': string, 'eventId': string, 'maxAttendees'?: number, 'timeZone'?: string}, callback: (error: any, body: Event, response: any) => void) => Request;
                     'import': (parameters: {'calendarId': string, 'supportsAttachments'?: boolean}, callback: (error: any, body: Event, response: any) => void) => Request;
-                    'insert': (parameters: {'calendarId': string, 'maxAttendees'?: number, 'sendNotifications'?: boolean, 'supportsAttachments'?: boolean}, callback: (error: any, body: Event, response: any) => void) => Request;
+                    'insert': (parameters: {'auth':any, 'calendarId': string, 'resource': any, 'maxAttendees'?: number, 'sendNotifications'?: boolean, 'supportsAttachments'?: boolean}, callback: (error: any, body: Event, response: any) => void) => Request;
                     'instances': (parameters: {'alwaysIncludeEmail'?: boolean, 'calendarId': string, 'eventId': string, 'maxAttendees'?: number, 'maxResults'?: number, 'originalStart'?: string, 'pageToken'?: string, 'showDeleted'?: boolean, 'timeMax'?: string, 'timeMin'?: string, 'timeZone'?: string}, callback: (error: any, body: Events, response: any) => void) => Request;
                     'list': (parameters: {'auth':any, 'alwaysIncludeEmail'?: boolean, 'calendarId': string, 'iCalUID'?: string, 'maxAttendees'?: number, 'maxResults'?: number, 'orderBy'?: string, 'pageToken'?: string, 'privateExtendedProperty'?: string, 'q'?: string, 'sharedExtendedProperty'?: string, 'showDeleted'?: boolean, 'showHiddenInvitations'?: boolean, 'singleEvents'?: boolean, 'syncToken'?: string, 'timeMax'?: string, 'timeMin'?: string, 'timeZone'?: string, 'updatedMin'?: string}, callback: (error: any, body: Events, response: any) => void) => Request;
                     'move': (parameters: {'calendarId': string, 'destination': string, 'eventId': string, 'sendNotifications'?: boolean}, callback: (error: any, body: Event, response: any) => void) => Request;
