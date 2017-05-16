@@ -10,29 +10,45 @@ export class AthCalendar {
 
     }
 
-    insertEvents(events: AthEvent[]) {
-        console.log(`[${new Date()}] Inserting events...`);
-        return new Promise<google.calendar.v3.Event[]>((resolve, reject) => {
-            Promise.all(events.map((event)=> this._insertEvent(event)))
-            .then(events => resolve(events))
-            .catch(err => reject(err));
-        });
-    }
 
     updateEvents(events: AthEvent[]) {
         return new Promise((resolve, reject) => {
-            this._deleteEvents()
-            //this._clearCalendar()
-            .then(() => {
-                this.insertEvents(events)
-                .then(eventsInserted => resolve(eventsInserted))
+            if(events && events.length > 0) {
+                this._deleteEvents()
+                //this._clearCalendar()
+                .then(() => {
+                    this._insertEvents(events)
+                    .then(eventsInserted => resolve(eventsInserted))
+                    .catch(err => reject(err));
+                })
                 .catch(err => reject(err));
-            })
-            .catch(err => reject(err));
+            } else {
+                reject("No events given. Not touching the calendar.")
+            }
         });
 
     }
 
+    private _getAllEvents() {
+        return new Promise<google.calendar.v3.Events>((resolve, reject) => { 
+            this.calendar.events.list({
+                    auth: this.authorization,
+                    calendarId: this.calendarId,
+                    maxResults: 999999
+                }, (err, events) => {
+                    if(err) {
+                        console.log('Error getting list of events');                    
+                        reject(err);
+                    }
+                    events.items.forEach((event)=> {
+                        event.id
+                    })
+
+                    resolve(events);
+                });
+        });
+    }
+    
     private _clearCalendar(retriesLeft=5) {
         return new Promise((resolve, reject) => {
             this.calendar.calendars.clear({
@@ -66,25 +82,16 @@ export class AthCalendar {
         });
     }
 
-    private _getAllEvents() {
-        return new Promise<google.calendar.v3.Events>((resolve, reject) => { 
-            this.calendar.events.list({
-                    auth: this.authorization,
-                    calendarId: this.calendarId,
-                    maxResults: 999999
-                }, (err, events) => {
-                    if(err) {
-                        console.log('Error getting list of events');                    
-                        reject(err);
-                    }
-                    events.items.forEach((event)=> {
-                        event.id
-                    })
 
-                    resolve(events);
-                });
+    private _insertEvents(events: AthEvent[]) {
+        console.log(`[${new Date()}] Inserting events...`);
+        return new Promise<google.calendar.v3.Event[]>((resolve, reject) => {
+            Promise.all(events.map((event)=> this._insertEvent(event)))
+            .then(events => resolve(events))
+            .catch(err => reject(err));
         });
     }
+    
     
     private _insertEvent(event: AthEvent, retriesLeft = 5) {
         
