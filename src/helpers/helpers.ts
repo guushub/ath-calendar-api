@@ -1,3 +1,4 @@
+
 export const excelDateToJSDate = (serial: number) => {
    let utc_days  = Math.floor(serial - 25569);
    let utc_value = utc_days * 86400;                                        
@@ -15,4 +16,30 @@ export const excelDateToJSDate = (serial: number) => {
    let minutes = Math.floor(total_seconds / 60) % 60;
 
    return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds);
+}
+
+export const athHourGuess = (inVal: any) => {
+
+    let hour = 20;
+
+    if(typeof(inVal) === "string") {
+
+        switch (inVal.toLowerCase()) {
+            case("ochtend"):
+            hour = 10;
+            break;
+            case("middag"):
+            hour = 13;
+            break;
+            case("avond"):
+            hour = 18;
+            break;
+            case("nacht"):
+            hour = 0;
+            break;
+        }
+    }
+
+    return hour;
+
 }

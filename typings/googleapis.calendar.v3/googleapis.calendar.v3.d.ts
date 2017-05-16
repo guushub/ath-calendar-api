@@ -34,7 +34,7 @@ declare module google {
                     'watch': (parameters: {'maxResults'?: number, 'minAccessRole'?: string, 'pageToken'?: string, 'showDeleted'?: boolean, 'showHidden'?: boolean, 'syncToken'?: string}, callback: (error: any, body: Channel, response: any) => void) => Request;
                 };
                 'calendars': {
-                    'clear': (parameters: {'calendarId': string}, callback: (error: any, body: any, response: any) => void) => Request;
+                    'clear': (parameters: {'auth': any,'calendarId': string}, callback: (error: any, body: any, response: any) => void) => Request;
                     'delete': (parameters: {'calendarId': string}, callback: (error: any, body: any, response: any) => void) => Request;
                     'get': (parameters: {'calendarId': string}, callback: (error: any, body: Calendar, response: any) => void) => Request;
                     'insert': (parameters: any, callback: (error: any, body: Calendar, response: any) => void) => Request;

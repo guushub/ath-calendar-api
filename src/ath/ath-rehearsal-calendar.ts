@@ -11,6 +11,7 @@ export class AthCalendar {
     }
 
     insertEvents(events: AthEvent[]) {
+        console.log(`[${new Date()}] Inserting events...`);
         return new Promise<google.calendar.v3.Event[]>((resolve, reject) => {
             Promise.all(events.map((event)=> this._insertEvent(event)))
             .then(events => resolve(events))
@@ -21,6 +22,7 @@ export class AthCalendar {
     updateEvents(events: AthEvent[]) {
         return new Promise((resolve, reject) => {
             this._deleteEvents()
+            //this._clearCalendar()
             .then(() => {
                 this.insertEvents(events)
                 .then(eventsInserted => resolve(eventsInserted))
@@ -31,14 +33,36 @@ export class AthCalendar {
 
     }
 
+    private _clearCalendar(retriesLeft=5) {
+        return new Promise((resolve, reject) => {
+            this.calendar.calendars.clear({
+                auth: this.authorization,
+                calendarId: this.calendarId
+            }, (err, response) => {
+                if (err) {
+                    console.log('Error clearing calendar');
+                    if(retriesLeft) {
+                        console.log(" retrying...");
+                        this._clearCalendar(retriesLeft)
+                    } else {
+                        reject(err);
+                    }
+                }
+                resolve(response);
+            });
+        });
+    }
+
     private _deleteEvents() {
+        console.log(`[${new Date()}] Deleting events...`);
         return new Promise((resolve, reject) => {
             this._getAllEvents()
             .then(events => {
                 Promise.all(events.items.map((event)=> this._deleteEvent(event)))
                 .then(vals => resolve(vals))
                 .catch(err => reject(err));
-            });
+            })
+            .catch(reject);
         });
     }
 
@@ -46,7 +70,8 @@ export class AthCalendar {
         return new Promise<google.calendar.v3.Events>((resolve, reject) => { 
             this.calendar.events.list({
                     auth: this.authorization,
-                    calendarId: this.calendarId
+                    calendarId: this.calendarId,
+                    maxResults: 999999
                 }, (err, events) => {
                     if(err) {
                         console.log('Error getting list of events');                    
@@ -61,24 +86,32 @@ export class AthCalendar {
         });
     }
     
-    private _insertEvent(event: AthEvent) {
+    private _insertEvent(event: AthEvent, retriesLeft = 5) {
         
         return new Promise<google.calendar.v3.Event>((resolve, reject) => { 
             this.calendar.events.insert({
             auth: this.authorization,
             calendarId: this.calendarId,
             resource: event.toGoogleEvent(),
-            }, (err, event) => {
+            }, (err, response) => {
+                //console.log('\nAdding event:\n', JSON.stringify(event))
                 if (err) {
-                    console.log('Error inserting event');
-                    reject(err);
+                    console.log(`Error inserting event: ${event.what} (${event.startDate.toLocaleDateString()} ${event.startDate.toLocaleTimeString()})`, err.code);
+                    if(retriesLeft) {
+                        console.log(` retrying event ${event.startDate.toLocaleDateString()} ${event.startDate.toLocaleTimeString()}...`);
+                        setTimeout(() => {
+                            this._insertEvent(event, retriesLeft)
+                        }, 1000);
+                    } else {
+                        reject(err);
+                    }
                 }
-                resolve(event);
+                resolve(response);
             });
         });
     }
 
-    private _deleteEvent(event: google.calendar.v3.Event) {
+    private _deleteEvent(event: google.calendar.v3.Event, retriesLeft = 5) {
 
         return new Promise((resolve, reject) => {
             this.calendar.events.delete({
@@ -87,8 +120,15 @@ export class AthCalendar {
                 eventId: event.id
             }, (err, response) => {
                     if (err) {
-                        console.log('Error deleting event');
-                        reject(err);
+                        console.log(`Error deleting event: ${event.id}`, err.code);
+                        if(retriesLeft) {
+                            console.log(` retrying ${event.id}...`);
+                            setTimeout(() => {
+                                this._deleteEvent(event, retriesLeft);
+                            }, 1000);
+                        } else {
+                            reject(err);
+                        }
                     }
                     resolve(response);            
             });

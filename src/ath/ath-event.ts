@@ -30,7 +30,7 @@ export class AthEvent {
     }
 
     getSummary() {
-        return this.what;
+        return this.seatSetters ? `${this.what}   (Stoelen: ${this.seatSetters})` : this.what;
     }
 
     getLocation() {
@@ -38,7 +38,7 @@ export class AthEvent {
     }
 
     getDescription() {
-        return `Stoelen: ${this.seatSetters}`;
+        return `${this.program}\nStoelen: ${this.seatSetters}\n\n${this.remarks}`;
     }
 
     getGoogleDateTime(dateIn: Date) {
