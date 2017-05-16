@@ -43,7 +43,7 @@ Config.load("./assets/config.json")
         if(row[0]) {
           let what = row[4] ? row[4] : "Repetitie";
           let where = row[3];
-          let program = `Voor de pauze:\n${row[4]}\n\nNa de pauze:\n${row[5]}\n`;
+          let program = `Voor de pauze:\n${row[5]}\n\nNa de pauze:\n${row[6]}\n`;
           let seatSetters = row[7] ? row[7] : "";
           let remarks = row[8] ? row[8] : "";
 
