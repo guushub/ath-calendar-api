@@ -15,7 +15,7 @@ import * as Helpers from './helpers/helpers';
 let config: Config.IAthCalenderApiConfig;
 let athCalendar: AthCalendar;
 const authApp = new Auth(['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/calendar'], 
-                            'sheets.googleapis.com-ath-calendar-api.json');
+                            'sheets.googleapis.com-ath-calendar-app.json', 'client_secret-ath-calendar-app.json');
 
 //setInterval(() => {
   Config.load("./assets/config.json")

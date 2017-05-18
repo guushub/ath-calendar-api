@@ -10,11 +10,11 @@ export class Auth {
     token_path: string;
     clientSecret_path: string;
 
-    constructor(public scopes: string[], public authTokenFileName: string) {
+    constructor(public scopes: string[], public authTokenFileName: string, public clientSecretFileName: string) {
         this.token_dir = (process.env.HOME || process.env.HOMEPATH ||
             process.env.USERPROFILE) + '/.credentials/';
         this.token_path = this.token_dir + authTokenFileName;
-        this.clientSecret_path = this.token_dir + 'client_secret.json';
+        this.clientSecret_path = this.token_dir + clientSecretFileName;
     }
 
     authorize() {
