@@ -22,12 +22,13 @@ const authApp = new Auth(['https://www.googleapis.com/auth/spreadsheets.readonly
   .then((configLoaded) => {
     // Loaded the configuration, set it to the global scope and load the client secret file
     config = configLoaded;
-    return Config.getClientSecret(config.CLIENT_FILE_PATH);  
+    // return Config.getClientSecret(config.CLIENT_FILE_PATH);  
+    return authApp.authorize();
   })
-  .then(credentials => {
-    // Authorize the sheets API
-    return authApp.authorize(credentials);
-  })
+  // .then(credentials => {
+  //   // Authorize the sheets API
+  //   return authApp.authorize(credentials);
+  // })
   .then(authorization => {
     athCalendar = new AthCalendar(config.REHEARSAL_CALENDAR_ID, authorization);
     console.log(`[${new Date()}] Authorized... start updating calendar!`);
