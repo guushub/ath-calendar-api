@@ -17,7 +17,7 @@ let athCalendar: AthCalendar;
 const authApp = new Auth(['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/calendar'], 
                             'sheets.googleapis.com-ath-calendar-api.json');
 
-setInterval(() => {
+//setInterval(() => {
   Config.load("./assets/config.json")
   .then((configLoaded) => {
     // Loaded the configuration, set it to the global scope and load the client secret file
@@ -93,4 +93,4 @@ setInterval(() => {
     console.log(`[${new Date()}] Succesfully added/updated events!`);
   })
   .catch(error => console.error(error));
-}, (24*60*60*1000)/8);
+//}, (24*60*60*1000)/8);
