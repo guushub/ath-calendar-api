@@ -6,20 +6,31 @@ import * as Promise from 'promise';
 const auth: googleAuth.GoogleAuth = new googleAuth();
 
 export class Auth {
-    token_dir: string;
-    token_path: string;
-    clientSecret_path: string;
+    private _token_dir: string;
+    private _token_path: string;
+    private _clientSecret_path: string;
+    private _clientSecret = {
+        "installed": {
+            "client_id":"",
+            "project_id":"",
+            "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+            "token_uri":"https://accounts.google.com/o/oauth2/token",
+            "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+            "client_secret":"",
+            "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]
+        }
+    }
 
     constructor(public scopes: string[], public authTokenFileName: string, public clientSecretFileName: string) {
-        this.token_dir = (process.env.HOME || process.env.HOMEPATH ||
+        this._token_dir = (process.env.HOME || process.env.HOMEPATH ||
             process.env.USERPROFILE) + '/.credentials/';
-        this.token_path = this.token_dir + authTokenFileName;
-        this.clientSecret_path = this.token_dir + clientSecretFileName;
+        this._token_path = this._token_dir + authTokenFileName;
+        this._clientSecret_path = this._token_dir + clientSecretFileName;
     }
 
     authorize() {
         return new Promise<googleAuth.OAuth2Client>((resolve, reject) => {
-            this.getCredentials()
+            this._getCredentials()
             .then((credentials: any) => {
                 const clientSecret = credentials.installed.client_secret;
                 const clientId = credentials.installed.client_id;
@@ -27,10 +38,10 @@ export class Auth {
                 const oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
                 // Check if we have previously stored a token.
-                fs.readFile(this.token_path, (err, token) => {
+                fs.readFile(this._token_path, (err, token) => {
                     if (err) {
                         // There is no token, so get new one.
-                        this.getNewToken(oauth2Client)
+                        this._getNewToken(oauth2Client)
                         .then(client => resolve(oauth2Client))  // new token is found, resolve this promise
                         .catch(error => reject(error));         // couldn't get a token, so reject this promise
                     } else {
@@ -47,7 +58,7 @@ export class Auth {
         });
     }
 
-    getNewToken(oauth2Client) {
+    private _getNewToken(oauth2Client) {
         const authUrl = oauth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: this.scopes
@@ -67,7 +78,7 @@ export class Auth {
                     }
 
                     oauth2Client.credentials = token;
-                    this.storeTokenFiles(token, this.token_dir, this.token_path)
+                    this._storeTokenFiles(token, this._token_dir, this._token_path)
                     .then(tokenPath => {
                         console.log(`Token stored to ${tokenPath}`);
                         resolve(oauth2Client);                
@@ -78,57 +89,25 @@ export class Auth {
         });
     }
 
-    // storeToken(token) {
-
-    //     return new Promise((resolve, reject) => {
-    //         try {
-    //             fs.mkdirSync(this.token_dir);
-    //         } catch (err) {
-    //             if (err.code != 'EEXIST') {
-    //                 reject(err);
-    //             }
-    //         }
-            
-    //         fs.writeFile(this.token_path, JSON.stringify(token), (err) => {
-    //             reject(err);
-    //         });
-
-    //         resolve(this.token_path);
-
-    //     });
-    // }
-
-    getCredentials() {
+    private _getCredentials() {
 
         return new Promise((resolve, reject) => {
             // Check if we have previously stored a token.
-            fs.readFile(this.clientSecret_path, (err, clientSecret) => {
+            fs.readFile(this._clientSecret_path, (err, clientSecret) => {
                 if (err) {
                     // There is no token, so get new one.
-                    this.getClientSecret()
+                    this._getClientSecret()
                     .then(client => resolve(client)) 
                     .catch(error => reject(error));
                 } else {
-                    resolve(clientSecret);
+                    resolve(JSON.parse(clientSecret.toString()));
                 }
             });
 
         });
     }
 
-    getClientSecret() {
-
-        let clientSecret = {"installed": {
-                "client_id":"",
-                "project_id":"",
-                "auth_uri":"https://accounts.google.com/o/oauth2/auth",
-                "token_uri":"https://accounts.google.com/o/oauth2/token",
-                "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
-                "client_secret":"",
-                "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]
-            }
-        }
-
+    private _getClientSecret() {
         console.log('No client secert file present. Need more information. ');
         const rl = readline.createInterface({
             input: process.stdin,
@@ -136,31 +115,30 @@ export class Auth {
         });
 
         return new Promise((resolve, reject) => {
-            rl.question('project id: ', (projectId) => {
-                clientSecret.installed.project_id = projectId
-            });
-
-            rl.question('client id: ', (clientId) => {
-                clientSecret.installed.client_id = clientId
-            });
-
-            rl.question('client secret: ', (clientSecretRl) => {
-                clientSecret.installed.client_secret = clientSecretRl
+            rlQuestion(rl, 'project id: ')
+            .then(answer => {
+                this._clientSecret.installed.project_id = answer;
+                return rlQuestion(rl, 'client id: ');
+            })
+            .then(answer => {
+                this._clientSecret.installed.client_id = answer;
+                return rlQuestion(rl, 'client secret: ');
+            })
+            .then(answer => {
+                this._clientSecret.installed.client_secret = answer
                 rl.close();
-                this.storeTokenFiles(clientSecret, this.token_dir, this.clientSecret_path)
-                .then(filePath => {
-                    console.log(`Client secret saved to ${filePath}`);
-                    resolve(clientSecret);
-                });
-                
-            });
-            
-        })
+                return this._storeTokenFiles(this._clientSecret, this._token_dir, this._clientSecret_path);
+            })
+            .then(filePath => {
+                console.log(`Client secret saved to ${filePath}`);
+                resolve(this._clientSecret);
+            });            
+        });
 
 
     }
 
-    storeTokenFiles(token, fileDir: string, filePath: string) {
+    private _storeTokenFiles(token, fileDir: string, filePath: string) {
         return new Promise((resolve, reject) => {
             try {
                 fs.mkdirSync(fileDir);
@@ -181,3 +159,10 @@ export class Auth {
 
 }
 
+const rlQuestion = (rl: readline.ReadLine, question: string) => {
+    return new Promise<string>((resolve, reject) => { 
+        rl.question(question, (answer) => {
+                    resolve(answer);
+        });
+    });
+}
