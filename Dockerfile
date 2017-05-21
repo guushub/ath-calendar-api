@@ -1,3 +1,4 @@
+# Make sure to build the typescript files before building the docker file!
 FROM node:7
 
 # Create app directory
