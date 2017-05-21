@@ -112,11 +112,11 @@ const runApp = () => {
   })
   .then(() => {
     console.log(`[${new Date()}] Succesfully added/updated events!`);
-    setTimeout(() => runApp(), 5*60*1000);
+    setTimeout(() => runApp(), 15*60*1000);
   })
   .catch(error => { 
     console.log("Global error...");
     console.error(error);
-    setTimeout(() => runApp(), 5*60*1000);    
+    setTimeout(() => runApp(), 15*60*1000);    
   });
 }
