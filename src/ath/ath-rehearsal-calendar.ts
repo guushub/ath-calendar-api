@@ -5,6 +5,7 @@ import { AthEvent } from './ath-event';
 
 export class AthCalendar {
     calendar = google.calendar('v3');
+    events: google.calendar.v3.Event[]  = [];
 
     constructor(public calendarId: string, public authorization) {
 
@@ -14,8 +15,8 @@ export class AthCalendar {
     updateEvents(events: AthEvent[]) {
         return new Promise((resolve, reject) => {
             if(events && events.length > 0) {
-                this._deleteEvents()
-                //this._clearCalendar()
+                //this._deleteEvents()
+                this._clearCalendar()
                 .then(() => {
                     this._insertEvents(events)
                     .then(eventsInserted => resolve(eventsInserted))
@@ -29,27 +30,29 @@ export class AthCalendar {
 
     }
 
-    private _getAllEvents() {
+    private _getAllEvents(pageToken?: string) {
+        
+
         return new Promise<google.calendar.v3.Events>((resolve, reject) => { 
+            
             this.calendar.events.list({
                     auth: this.authorization,
                     calendarId: this.calendarId,
-                    maxResults: 999999
+                    maxResults: 9999999,
                 }, (err, events) => {
                     if(err) {
                         console.log('Error getting list of events');                    
                         reject(err);
                     }
-                    events.items.forEach((event)=> {
-                        event.id
-                    })
 
                     resolve(events);
+                    
                 });
         });
     }
     
     private _clearCalendar(retriesLeft=5) {
+        console.log(`[${new Date()}] Clearing agenda...`);
         return new Promise((resolve, reject) => {
             this.calendar.calendars.clear({
                 auth: this.authorization,

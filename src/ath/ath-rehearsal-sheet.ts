@@ -8,7 +8,7 @@ export const getRows = (auth: googleAuth.OAuth2Client, spreadsheetId: string) =>
         sheets.spreadsheets.values.get({
         auth: auth as any,
         spreadsheetId: spreadsheetId,
-        range: 'Sheet1!A4:H',
+        range: 'Sheet1!A4:I',
         valueRenderOption: 'UNFORMATTED_VALUE'
         }, (err, response) => {
         if (err) {
