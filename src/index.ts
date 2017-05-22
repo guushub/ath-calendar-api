@@ -19,6 +19,17 @@ const authApp = new Auth(['https://www.googleapis.com/auth/spreadsheets.readonly
 
 let counter = 0;
 
+http.createServer((request, response) => {
+   // Dummy server
+   response.writeHead(200, {'Content-Type': 'text/plain'});
+   
+   // Send the response body as "Hello World"
+   response.end('Hello World\n');
+}).listen(8000);
+
+// Console will print the message
+console.log('Server running at http://127.0.0.1:8000/');
+
 Config.load("./assets/config.json")
 .then((configLoaded) => {
   // Loaded the configuration, set it to the global scope and load the client secret file
