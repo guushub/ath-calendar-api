@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 import * as googleAuth from 'google-auth-library';
 import * as Promise from 'promise';
+import * as express from 'express';
 
 const auth: googleAuth.GoogleAuth = new googleAuth();
 
@@ -58,6 +59,14 @@ export class Auth {
         });
     }
 
+    public hasTokenFile() {
+        return fs.existsSync(this._token_path);
+    }
+
+    public hasSecretFile() {
+        return fs.existsSync(this._clientSecret_path);
+    }
+
     private _getNewToken(oauth2Client) {
         const authUrl = oauth2Client.generateAuthUrl({
             access_type: 'offline',
@@ -95,7 +104,7 @@ export class Auth {
             // Check if we have previously stored a token.
             fs.readFile(this._clientSecret_path, (err, clientSecret) => {
                 if (err) {
-                    // There is no token, so get new one.
+                    // There is no secrets file, so get new one.                  
                     this._getClientSecret()
                     .then(client => resolve(client)) 
                     .catch(error => reject(error));
@@ -108,7 +117,7 @@ export class Auth {
     }
 
     private _getClientSecret() {
-        console.log('No client secert file present. Need more information. ');
+        console.log('No client secret file present. Need more information. ');
         const rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
@@ -166,3 +175,4 @@ const rlQuestion = (rl: readline.ReadLine, question: string) => {
         });
     });
 }
+

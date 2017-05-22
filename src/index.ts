@@ -7,6 +7,7 @@ import * as googleAuth from 'google-auth-library';
 
 import * as Config from './config/config';
 import { Auth } from './auth/auth';
+import { AuthServer } from './auth/auth-server';
 import { AthEvent } from './ath/ath-event';
 import * as AthRehearsalSheet from './ath/ath-rehearsal-sheet';
 import { AthCalendar } from './ath/ath-rehearsal-calendar';
@@ -14,21 +15,13 @@ import * as Helpers from './helpers/helpers';
 
 let config: Config.IAthCalenderApiConfig;
 let athCalendar: AthCalendar;
+
+// Start authorization tooling
 const authApp = new Auth(['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/calendar'], 
                             'sheets.googleapis.com-ath-calendar-app.json', 'client_secret-ath-calendar-app.json');
+const authServer = new AuthServer(authApp);
 
 let counter = 0;
-
-http.createServer((request, response) => {
-   // Dummy server
-   response.writeHead(200, {'Content-Type': 'text/plain'});
-   
-   // Send the response body as "Hello World"
-   response.end('ATH Calendar app is running\n');
-}).listen(8000);
-
-// Console will print the message
-console.log('Server running at http://127.0.0.1:8000/');
 
 Config.load("./assets/config.json")
 .then((configLoaded) => {
