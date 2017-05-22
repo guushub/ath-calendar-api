@@ -36,6 +36,7 @@ export class Auth {
                 const clientSecret = credentials.installed.client_secret;
                 const clientId = credentials.installed.client_id;
                 const redirectUrl = credentials.installed.redirect_uris[0];
+                //TO DO: use the method
                 const oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
                 // Check if we have previously stored a token.
@@ -67,8 +68,34 @@ export class Auth {
         return fs.existsSync(this._clientSecret_path);
     }
 
+    private _getOAuth2Client() {
+        return new Promise<googleAuth.OAuth2Client>((resolve, reject) => {
+            this._getCredentials()
+            .then((credentials: any) => {
+                    const clientSecret = credentials.installed.client_secret;
+                    const clientId = credentials.installed.client_id;
+                    const redirectUrl = credentials.installed.redirect_uris[0];
+                    resolve(new auth.OAuth2(clientId, clientSecret, redirectUrl));
+            });
+        });
+    }
+
+    public getAuthUrl() {
+        return new Promise((resolve, reject) => { 
+            this._getOAuth2Client()
+            .then(oauth2Client => {
+                const authUrl = oauth2Client.generateAuthUrl({
+                    access_type: 'offline',
+                    scope: this.scopes
+                });
+                resolve(authUrl)
+            })
+        });
+    }
+
     private _getNewToken(oauth2Client) {
         const authUrl = oauth2Client.generateAuthUrl({
+            //TO DO: use the method
             access_type: 'offline',
             scope: this.scopes
         });

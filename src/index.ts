@@ -7,7 +7,7 @@ import * as googleAuth from 'google-auth-library';
 
 import * as Config from './config/config';
 import { Auth } from './auth/auth';
-import { AuthServer } from './auth/auth-server';
+import { AuthManager } from './auth/auth-manager';
 import { AthEvent } from './ath/ath-event';
 import * as AthRehearsalSheet from './ath/ath-rehearsal-sheet';
 import { AthCalendar } from './ath/ath-rehearsal-calendar';
@@ -19,7 +19,7 @@ let athCalendar: AthCalendar;
 // Start authorization tooling
 const authApp = new Auth(['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/calendar'], 
                             'sheets.googleapis.com-ath-calendar-app.json', 'client_secret-ath-calendar-app.json');
-const authServer = new AuthServer(authApp);
+const authServer = new AuthManager(authApp);
 
 let counter = 0;
 
