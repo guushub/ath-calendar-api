@@ -19,17 +19,18 @@ let athCalendar: AthCalendar;
 // Start authorization tooling
 const authApp = new Auth(['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/calendar'], 
                             'sheets.googleapis.com-ath-calendar-app.json', 'client_secret-ath-calendar-app.json');
-const authServer = new AuthManager(authApp);
+let authServer: AuthManager;
 
 let counter = 0;
 
 Config.load("./assets/config.json")
 .then((configLoaded) => {
   // Loaded the configuration, set it to the global scope and load the client secret file
+  
   config = configLoaded;
-  runApp();
+  authServer = new AuthManager(authApp, runApp);
+  //runApp();
 })
-
 
 const runApp = () => {
   counter += 1;
