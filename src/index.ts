@@ -76,7 +76,7 @@ const runApp = () => {
               //rehearsalDateStart.setHours(rehearsalDateStart.getHours() + 20);
           }
 
-          // correct for timezone
+          // correct for timezone of the host
           if(!isDayEvent) {
             let measureMoment = moment(rehearsalDateStart);
             let offsetHost = rehearsalDateStart.getTimezoneOffset();
