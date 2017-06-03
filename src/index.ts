@@ -4,6 +4,7 @@ import * as http from 'http';
 import * as Promise from 'promise';
 import * as google from 'googleapis';
 import * as googleAuth from 'google-auth-library';
+import * as moment from 'moment-timezone';
 
 import * as Config from './config/config';
 import { Auth } from './auth/auth';
@@ -73,6 +74,19 @@ const runApp = () => {
                 isDayEvent = true;
               }
               //rehearsalDateStart.setHours(rehearsalDateStart.getHours() + 20);
+          }
+
+          // correct for timezone
+          if(!isDayEvent) {
+            let measureMoment = moment(rehearsalDateStart);
+            let offsetHost = rehearsalDateStart.getTimezoneOffset();
+            let minutesToAdd = 60;
+            if( measureMoment.tz("Europe/Amsterdam").isDST() ){
+                minutesToAdd = 120;
+            }
+
+            let offset = rehearsalDateStart.getTimezoneOffset() + minutesToAdd;
+            rehearsalDateStart = new Date(rehearsalDateStart.setTime(rehearsalDateStart.getTime() - ((offset/60)*60*60*1000)));
           }
 
           if(!isNaN(rehearsalDateStart.getDate())) {
