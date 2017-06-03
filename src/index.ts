@@ -4,7 +4,7 @@ import * as http from 'http';
 import * as Promise from 'promise';
 import * as google from 'googleapis';
 import * as googleAuth from 'google-auth-library';
-import * as moment from 'moment-timezone';
+
 
 import * as Config from './config/config';
 import { Auth } from './auth/auth';
@@ -78,15 +78,7 @@ const runApp = () => {
 
           // correct for timezone of the host
           if(!isDayEvent) {
-            let measureMoment = moment(rehearsalDateStart);
-            let offsetHost = rehearsalDateStart.getTimezoneOffset();
-            let minutesToAdd = 60;
-            if( measureMoment.tz("Europe/Amsterdam").isDST() ){
-                minutesToAdd = 120;
-            }
-
-            let offset = rehearsalDateStart.getTimezoneOffset() + minutesToAdd;
-            rehearsalDateStart = new Date(rehearsalDateStart.setTime(rehearsalDateStart.getTime() - ((offset/60)*60*60*1000)));
+            rehearsalDateStart = Helpers.correctDateForTimezone(rehearsalDateStart);
           }
 
           if(!isNaN(rehearsalDateStart.getDate())) {
@@ -98,10 +90,11 @@ const runApp = () => {
 
               if(typeof(row[2]) === "number") {
                 rehearsalDateEnd = Helpers.excelDateToJSDate(row[0] + row[2]);
+
+                // Correct for timezone
+                rehearsalDateEnd = Helpers.correctDateForTimezone(rehearsalDateEnd);
+                
               } 
-              // else if(row[2]) {
-              //   rehearsalDateStart.setHours(rehearsalDateStart.getHours() + Helpers.athHourGuess(row[2]));  
-              // }
 
               // Check if date end is after start. If not, fallback to the date start + 2.5hours
               if(rehearsalDateEnd <= rehearsalDateStart) {

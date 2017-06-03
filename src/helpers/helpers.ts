@@ -1,3 +1,4 @@
+import * as moment from 'moment-timezone';
 
 export const excelDateToJSDate = (serial: number) => {
    let utc_days  = Math.floor(serial - 25569);
@@ -42,4 +43,18 @@ export const athHourGuess = (inVal: any) => {
 
     return hour;
 
+}
+
+export const correctDateForTimezone = (dateToCorrect: Date) => {
+        let dateMoment = moment(dateToCorrect);
+        let offsetHost = dateToCorrect.getTimezoneOffset();
+        let minutesToAdd = 60;
+        if( dateMoment.tz("Europe/Amsterdam").isDST() ){
+            minutesToAdd = 120;
+        }
+
+        let offset = dateToCorrect.getTimezoneOffset() + minutesToAdd;
+        dateToCorrect = new Date(dateToCorrect.setTime(dateToCorrect.getTime() - ((offset/60)*60*60*1000)));
+
+        return dateToCorrect;
 }
