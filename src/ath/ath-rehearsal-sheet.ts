@@ -11,10 +11,14 @@ export const getRows = (auth: googleAuth.OAuth2Client, spreadsheetId: string) =>
         range: 'Sheet1!A4:I',
         valueRenderOption: 'UNFORMATTED_VALUE'
         }, (err, response) => {
-        if (err) {
-            reject(err);
-        }
-        resolve(response.values);
+            if (err) {
+                reject(err);
+            }
+            if(response && response.values) {
+                resolve(response.values);
+            } else {
+                reject("Unexpected response from sheets API.")
+            }
         });
     });
 }
